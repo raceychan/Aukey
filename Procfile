@@ -1,1 +1,1 @@
-"web: sh setup.sh && streamlit run Aukey_ranks.py" 
+web: sh setup.sh && streamlit run Aukey_ranks.py
