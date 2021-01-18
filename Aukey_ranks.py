@@ -10,16 +10,12 @@ st.set_page_config(
     initial_sidebar_state='expanded'
 )
 
-#sql='''
-#select * from mws_data.project_20_listings
-#'''
 
 def main():
     menu=['主页','排名','查询','其他']
     choice = st.sidebar.selectbox('工具箱',menu)
     @st.cache
     def load_data():
-        #engine = create_engine('mysql+pymysql://chencheng:iKWz@4*7W55@10.1.1.202:3306')
         data=pd.read_csv('project_20_listings.csv') 
         data.rename(columns={'snapshotted_at':'date'},inplace=True)
         data['date']=pd.to_datetime(pd.to_datetime(data['date']).dt.date)
@@ -50,7 +46,6 @@ def main():
         with c2:
 
             df=table['ranking'].loc[f'{chosed_asin}']
-    #        fig=px.line(df, x=df.index,y=df,title=f'{chosed_asin}排名变化')
             fig=px.line(df, x=df.index, y=df, title=f'{chosed_asin}排名变化')
             st.subheader('当月排名变化情况')
             st.plotly_chart(fig)
@@ -60,7 +55,6 @@ def main():
             value=datetime(2021,1,28),
             format='MM/DD/YY'
         )
-        #table['Change_in_rank']=table['ranking']['2021-01-14']-table['ranking']['2021-01-15']
         if start_time in table['ranking'].columns:
             st.write(table['ranking'][f'{start_time}'],
             'and change in data compared to previous date is:',
@@ -79,15 +73,8 @@ def main():
         ci=st.multiselect('品类ID',data['category_id'].unique())           
         newdate=st.multiselect('日期',data[(data['category_id'].isin(ci))].date.unique())            
         asin=st.multiselect('ASIN',data[data['category_id'].isin(ci)&(data['date'].isin(newdate))].asin.unique())
-#    if newdate is None and asin is None:
-#        newtable=data[data['category_id'].isin(ci)]
-#    elif asin is None:
-#        newtable=data[(data['category_id'].isin(ci))&(data['asin'].isin(asin))]
-#    else:
         newtable=data[(data['category_id'].isin(ci))&(data['asin'].isin(asin))&(data['date'].isin(newdate))]
         st.write(newtable)
 
-
 if __name__=='__main__':
     main()
-
